@@ -8,7 +8,7 @@ export default class CandidatePhone {
     id: string
 
     @Column()
-    phone: string
+    number: string
 
     @CreateDateColumn()
     createdAt: Date

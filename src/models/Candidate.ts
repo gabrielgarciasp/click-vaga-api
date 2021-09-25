@@ -19,7 +19,9 @@ export default class Candidate {
     @Column()
     gender: string
 
-    @OneToMany(() => CandidatePhone, (reference) => reference.candidate)
+    @OneToMany(() => CandidatePhone, (reference) => reference.candidate, {
+        cascade: ['insert'],
+    })
     phones: CandidatePhone[]
 
     @Column({nullable: true})
