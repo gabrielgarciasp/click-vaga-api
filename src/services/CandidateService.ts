@@ -10,7 +10,7 @@ import {sign} from "../utils/jwt";
 import {CandidateAuthenticateResponse} from "../types/candidate/CandidateAuthenticateResponse";
 import {CandidateUpdateRequest} from "../types/candidate/CandidateUpdateRequest";
 
-async function checkExistsCandidateByEmail(email: string) {
+async function _checkExistsCandidateByEmail(email: string) {
     const repository = getRepository(Candidate)
 
     return await repository.count({
@@ -20,13 +20,28 @@ async function checkExistsCandidateByEmail(email: string) {
     }) > 0
 }
 
+async function _getCandidateByEmail(email: string) {
+    const candidate = await getRepository(Candidate)
+        .findOne({
+            where: {
+                email
+            }
+        })
+
+    if (candidate == undefined) {
+        throw new NotFoundError('Candidate not found')
+    }
+
+    return candidate
+}
+
 async function authenticateCandidate(entity: CandidateAuthenticateRequest): Promise<CandidateAuthenticateResponse> {
     const defaultError = new NotFoundError('Email or Password Incorrect');
 
     let candidate;
 
     try {
-        candidate = await getCandidateByEmail(entity.email)
+        candidate = await _getCandidateByEmail(entity.email)
     } catch (e) {
         console.log(1)
         throw defaultError
@@ -45,23 +60,8 @@ async function authenticateCandidate(entity: CandidateAuthenticateRequest): Prom
     }
 }
 
-async function getCandidateByEmail(email: string) {
-    const candidate = await getRepository(Candidate)
-        .findOne({
-            where: {
-                email
-            }
-        })
-
-    if (candidate == undefined) {
-        throw new NotFoundError('Candidate not found')
-    }
-
-    return candidate
-}
-
 async function createCandidate(entity: CandidateCreateRequest) {
-    if (await checkExistsCandidateByEmail(entity.email)) {
+    if (await _checkExistsCandidateByEmail(entity.email)) {
         throw new ConflictError('This email is already in use')
     }
 
