@@ -7,4 +7,11 @@ export default Yup.object().shape({
     name: Yup.string().required(),
     gender: Yup.string().required(),
     phone: Yup.string().required(),
+    birthDate: Yup.date().required(),
+    cep: Yup.string().required(),
+    address: Yup.string().required(),
+    number: Yup.string().required(),
+    district: Yup.string().required(),
+    city: Yup.string().required(),
+    state: Yup.string().required(),
 })

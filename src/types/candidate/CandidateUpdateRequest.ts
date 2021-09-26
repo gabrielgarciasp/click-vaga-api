@@ -5,4 +5,11 @@ export type CandidateUpdateRequest = {
     name: string,
     gender: string,
     phone: string,
+    birthDate: Date,
+    cep: string,
+    address: string,
+    number: string,
+    district: string,
+    city: string,
+    state: string,
 }

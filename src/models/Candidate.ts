@@ -1,5 +1,4 @@
-import {Column, CreateDateColumn, Entity, Generated, OneToMany, PrimaryColumn, UpdateDateColumn,} from 'typeorm'
-import CandidatePhone from './CandidatePhone'
+import {Column, CreateDateColumn, Entity, Generated, PrimaryColumn, UpdateDateColumn,} from 'typeorm'
 
 @Entity()
 export default class Candidate {
@@ -19,13 +18,11 @@ export default class Candidate {
     @Column()
     gender: string
 
-    @OneToMany(() => CandidatePhone, (reference) => reference.candidate, {
-        cascade: ['insert'],
-    })
-    phones: CandidatePhone[]
+    @Column()
+    phone: string
 
     @Column({nullable: true})
-    birdDate?: Date
+    birthDate?: Date
 
     @Column({nullable: true})
     cep?: string
@@ -44,6 +41,9 @@ export default class Candidate {
 
     @Column({nullable: true})
     state?: string
+
+    @Column({nullable: true})
+    picture?: string
 
     @CreateDateColumn()
     createdAt: Date

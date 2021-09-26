@@ -1,14 +1,4 @@
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    Generated,
-    ManyToOne,
-    OneToMany,
-    PrimaryColumn,
-    UpdateDateColumn
-} from 'typeorm'
-import Candidate from './Candidate'
+import {Column, CreateDateColumn, Entity, Generated, OneToMany, PrimaryColumn, UpdateDateColumn} from 'typeorm'
 import CurriculumSkill from "./CurriculumSkill";
 import CurriculumFormation from "./CurriculumFormation";
 import CurriculumFormationAdditional from "./CurriculumFormationAdditional";
@@ -21,6 +11,12 @@ export default class Curriculum {
     @PrimaryColumn()
     @Generated('uuid')
     id: string
+
+    @Column()
+    name: string
+
+    @Column({nullable: true})
+    picture?: string
 
     @Column({default: false})
     evaluated: boolean
@@ -51,8 +47,5 @@ export default class Curriculum {
 
     @UpdateDateColumn()
     updatedAt: Date
-
-    @ManyToOne(() => Candidate, (reference) => reference.phones)
-    candidate: Candidate
 
 }
