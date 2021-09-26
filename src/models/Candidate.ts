@@ -1,4 +1,5 @@
-import {Column, CreateDateColumn, Entity, Generated, PrimaryColumn, UpdateDateColumn,} from 'typeorm'
+import {Column, CreateDateColumn, Entity, Generated, OneToMany, PrimaryColumn, UpdateDateColumn,} from 'typeorm'
+import Curriculum from "./Curriculum";
 
 @Entity()
 export default class Candidate {
@@ -44,6 +45,9 @@ export default class Candidate {
 
     @Column({nullable: true})
     picture?: string
+
+    @OneToMany(() => Curriculum, (reference) => reference.candidate)
+    curriculums: Curriculum[]
 
     @CreateDateColumn()
     createdAt: Date

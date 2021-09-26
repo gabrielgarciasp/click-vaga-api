@@ -9,7 +9,7 @@ import {sign} from "../utils/jwt";
 import {CandidateAuthenticateResponse} from "../types/candidate/CandidateAuthenticateResponse";
 import {CandidateUpdateRequest} from "../types/candidate/CandidateUpdateRequest";
 
-async function _checkExistsCandidateByEmail(email: string) {
+async function _checkExistsCandidateByEmail(email: string): Promise<boolean> {
     const repository = getRepository(Candidate)
 
     return await repository.count({
@@ -19,11 +19,26 @@ async function _checkExistsCandidateByEmail(email: string) {
     }) > 0
 }
 
-async function _getCandidateByEmail(email: string) {
+async function _getCandidateByEmail(email: string): Promise<Candidate> {
     const candidate = await getRepository(Candidate)
         .findOne({
             where: {
                 email
+            }
+        })
+
+    if (candidate == undefined) {
+        throw new NotFoundError('Candidate not found')
+    }
+
+    return candidate
+}
+
+async function getCandidateById(id: string): Promise<Candidate> {
+    const candidate = await getRepository(Candidate)
+        .findOne({
+            where: {
+                id
             }
         })
 
@@ -92,4 +107,4 @@ async function updateCandidate(entity: CandidateUpdateRequest) {
     await getRepository(Candidate).save(candidate)
 }
 
-export {authenticateCandidate, createCandidate, updateCandidate}
+export {getCandidateById, authenticateCandidate, createCandidate, updateCandidate}

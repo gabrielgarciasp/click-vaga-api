@@ -1,10 +1,20 @@
-import {Column, CreateDateColumn, Entity, Generated, OneToMany, PrimaryColumn, UpdateDateColumn} from 'typeorm'
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    Generated,
+    ManyToOne,
+    OneToMany,
+    PrimaryColumn,
+    UpdateDateColumn
+} from 'typeorm'
 import CurriculumSkill from "./CurriculumSkill";
 import CurriculumFormation from "./CurriculumFormation";
 import CurriculumFormationAdditional from "./CurriculumFormationAdditional";
 import CurriculumExperience from "./CurriculumExperience";
 import CurriculumEvent from "./CurriculumEvent";
 import CurriculumInformation from "./CurriculumInformation";
+import Candidate from "./Candidate";
 
 @Entity()
 export default class Curriculum {
@@ -24,22 +34,34 @@ export default class Curriculum {
     @Column({nullable: true})
     goals?: string
 
-    @OneToMany(() => CurriculumSkill, (reference) => reference.curriculum)
+    @OneToMany(() => CurriculumSkill, (reference) => reference.curriculum, {
+        cascade: ['insert', 'remove'],
+    })
     skills: CurriculumSkill[]
 
-    @OneToMany(() => CurriculumFormation, (reference) => reference.curriculum)
+    @OneToMany(() => CurriculumFormation, (reference) => reference.curriculum, {
+        cascade: ['insert', 'remove'],
+    })
     formations: CurriculumFormation[]
 
-    @OneToMany(() => CurriculumFormationAdditional, (reference) => reference.curriculum)
+    @OneToMany(() => CurriculumFormationAdditional, (reference) => reference.curriculum, {
+        cascade: ['insert', 'remove'],
+    })
     formationsAdditional: CurriculumFormationAdditional[]
 
-    @OneToMany(() => CurriculumExperience, (reference) => reference.curriculum)
+    @OneToMany(() => CurriculumExperience, (reference) => reference.curriculum, {
+        cascade: ['insert', 'remove'],
+    })
     experiences: CurriculumExperience[]
 
-    @OneToMany(() => CurriculumEvent, (reference) => reference.curriculum)
+    @OneToMany(() => CurriculumEvent, (reference) => reference.curriculum, {
+        cascade: ['insert', 'remove'],
+    })
     events: CurriculumEvent[]
 
-    @OneToMany(() => CurriculumInformation, (reference) => reference.curriculum)
+    @OneToMany(() => CurriculumInformation, (reference) => reference.curriculum, {
+        cascade: ['insert', 'remove'],
+    })
     information: CurriculumInformation[]
 
     @CreateDateColumn()
@@ -47,5 +69,8 @@ export default class Curriculum {
 
     @UpdateDateColumn()
     updatedAt: Date
+
+    @ManyToOne(() => Candidate, (reference) => reference.curriculums)
+    candidate: Candidate
 
 }
