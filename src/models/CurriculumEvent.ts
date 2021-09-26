@@ -19,7 +19,9 @@ export default class CurriculumEvent {
     @UpdateDateColumn()
     updatedAt: Date
 
-    @ManyToOne(() => Curriculum, (reference) => reference.events)
+    @ManyToOne(() => Curriculum, (reference) => reference.events, {
+        onDelete: 'CASCADE'
+    })
     curriculum: Curriculum
 
 }

@@ -25,7 +25,9 @@ export default class CurriculumFormationAdditional {
     @UpdateDateColumn()
     updatedAt: Date
 
-    @ManyToOne(() => Curriculum, (reference) => reference.formationsAdditional)
+    @ManyToOne(() => Curriculum, (reference) => reference.formationsAdditional, {
+        onDelete: 'CASCADE'
+    })
     curriculum: Curriculum
 
 }

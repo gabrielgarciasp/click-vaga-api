@@ -35,32 +35,32 @@ export default class Curriculum {
     goals?: string
 
     @OneToMany(() => CurriculumSkill, (reference) => reference.curriculum, {
-        cascade: ['insert', 'remove'],
+        cascade: true,
     })
     skills: CurriculumSkill[]
 
     @OneToMany(() => CurriculumFormation, (reference) => reference.curriculum, {
-        cascade: ['insert', 'remove'],
+        cascade: true,
     })
     formations: CurriculumFormation[]
 
     @OneToMany(() => CurriculumFormationAdditional, (reference) => reference.curriculum, {
-        cascade: ['insert', 'remove'],
+        cascade: true,
     })
     formationsAdditional: CurriculumFormationAdditional[]
 
     @OneToMany(() => CurriculumExperience, (reference) => reference.curriculum, {
-        cascade: ['insert', 'remove'],
+        cascade: true,
     })
     experiences: CurriculumExperience[]
 
     @OneToMany(() => CurriculumEvent, (reference) => reference.curriculum, {
-        cascade: ['insert', 'remove'],
+        cascade: true,
     })
     events: CurriculumEvent[]
 
     @OneToMany(() => CurriculumInformation, (reference) => reference.curriculum, {
-        cascade: ['insert', 'remove'],
+        cascade: true,
     })
     information: CurriculumInformation[]
 
