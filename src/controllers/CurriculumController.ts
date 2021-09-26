@@ -3,10 +3,11 @@ import AuthorizationMiddleware from "../middlewares/AuthorizationMiddleware";
 import {createCurriculum, deleteCurriculum, updateCurriculum} from "../services/CurriculumService";
 import validate from "../utils/validate";
 import CurriculumCreateSchema from "../schemas/curriculum/CurriculumCreateSchema";
+import CandidateAuthorizationMiddleware from "../middlewares/CandidateAuthorizationMiddleware";
 
 const routes = Router()
 
-routes.post('/', AuthorizationMiddleware, async (req, res, next) => {
+routes.post('/', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
     try {
         req.body.candidateId = req.headers.authorizationId
         const values = validate(CurriculumCreateSchema, req.body)
@@ -17,7 +18,7 @@ routes.post('/', AuthorizationMiddleware, async (req, res, next) => {
     }
 })
 
-routes.put('/:id', AuthorizationMiddleware, async (req, res, next) => {
+routes.put('/:id', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
     try {
         req.body.id = req.params.id
         req.body.candidateId = req.headers.authorizationId
@@ -29,7 +30,7 @@ routes.put('/:id', AuthorizationMiddleware, async (req, res, next) => {
     }
 })
 
-routes.delete('/:id', AuthorizationMiddleware, async (req, res, next) => {
+routes.delete('/:id', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
     try {
         await deleteCurriculum(req.params.id, String(req.headers.authorizationId))
         res.status(204).send()

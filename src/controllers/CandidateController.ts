@@ -5,6 +5,7 @@ import CandidateCreateSchema from "../schemas/candidate/CandidateCreateSchema";
 import CandidateAuthenticateSchema from "../schemas/candidate/CandidateAuthenticateSchema";
 import CandidateUpdateSchema from "../schemas/candidate/CandidateUpdateSchema";
 import AuthorizationMiddleware from "../middlewares/AuthorizationMiddleware";
+import CandidateAuthorizationMiddleware from "../middlewares/CandidateAuthorizationMiddleware";
 
 const routes = Router()
 
@@ -28,7 +29,7 @@ routes.post('/', async (req, res, next) => {
     }
 })
 
-routes.put('/', AuthorizationMiddleware, async (req, res, next) => {
+routes.put('/', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
     try {
         req.body.id = req.headers.authorizationId
         const values = validate(CandidateUpdateSchema, req.body)

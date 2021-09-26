@@ -3,11 +3,13 @@ import {NextFunction, Request, Response, Router} from 'express'
 import ApiError from './exceptions/ApiError'
 import CandidateController from "./controllers/CandidateController";
 import CurriculumController from "./controllers/CurriculumController";
+import EvaluatorController from "./controllers/EvaluatorController";
 
 const routes = Router()
 
 routes.use('/candidate', CandidateController)
 routes.use('/curriculum', CurriculumController)
+routes.use('/evaluator', EvaluatorController)
 
 routes.get('/hello', (req: Request, res: Response) => {
     res.send('world')

@@ -19,7 +19,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
     const [scheme, token] = parts
 
     if (!/^Bearer$/i.test(scheme)) {
-        return next(new BadRequestError('Token malformated'))
+        return next(new BadRequestError('Token malformed'))
     }
 
     let tokenDecoded: any
