@@ -15,6 +15,7 @@ import CurriculumExperience from "./CurriculumExperience";
 import CurriculumEvent from "./CurriculumEvent";
 import CurriculumInformation from "./CurriculumInformation";
 import Candidate from "./Candidate";
+import Evaluation from "./Evaluation";
 
 @Entity()
 export default class Curriculum {
@@ -63,6 +64,11 @@ export default class Curriculum {
         cascade: true,
     })
     information: CurriculumInformation[]
+
+    @OneToMany(() => Evaluation, (reference) => reference.curriculum, {
+        cascade: true,
+    })
+    evaluations: Evaluation[]
 
     @CreateDateColumn()
     createdAt: Date

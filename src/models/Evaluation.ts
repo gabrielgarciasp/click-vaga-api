@@ -1,15 +1,6 @@
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    Generated,
-    ManyToOne,
-    OneToMany,
-    PrimaryColumn,
-    UpdateDateColumn,
-} from 'typeorm'
+import {Column, CreateDateColumn, Entity, Generated, ManyToOne, PrimaryColumn, UpdateDateColumn,} from 'typeorm'
 import Evaluator from "./Evaluator";
-import EvaluationFeedback from "./EvaluationFeedback";
+import Curriculum from "./Curriculum";
 
 @Entity()
 export default class Evaluation {
@@ -17,11 +8,11 @@ export default class Evaluation {
     @Generated('uuid')
     id: string
 
-    @OneToMany(() => EvaluationFeedback, (reference) => reference.evaluation)
-    feedbacks: EvaluationFeedback[]
-
     @Column()
     approved: boolean
+
+    @Column()
+    message: string
 
     @CreateDateColumn()
     createdAt: Date
@@ -31,5 +22,8 @@ export default class Evaluation {
 
     @ManyToOne(() => Evaluator, (reference) => reference.evaluations)
     evaluator: Evaluator
+
+    @ManyToOne(() => Curriculum, (reference) => reference.evaluations)
+    curriculum: Curriculum
 
 }

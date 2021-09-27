@@ -1,11 +1,36 @@
 import {Router} from "express";
 import AuthorizationMiddleware from "../middlewares/AuthorizationMiddleware";
-import {createCurriculum, deleteCurriculum, updateCurriculum} from "../services/CurriculumService";
+import {
+    createCurriculum,
+    deleteCurriculum,
+    getCurriculums,
+    getCurriculumsByCandidateId,
+    updateCurriculum
+} from "../services/CurriculumService";
 import validate from "../utils/validate";
 import CurriculumCreateSchema from "../schemas/curriculum/CurriculumCreateSchema";
 import CandidateAuthorizationMiddleware from "../middlewares/CandidateAuthorizationMiddleware";
+import EvaluatorAuthorizationMiddleware from "../middlewares/EvaluatorAuthorizationMiddleware";
 
 const routes = Router()
+
+routes.get('/candidate', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
+    try {
+        const response = await getCurriculumsByCandidateId(String(req.headers.authorizationId))
+        res.send(response)
+    } catch (err) {
+        next(err)
+    }
+})
+
+routes.get('/evaluator', AuthorizationMiddleware, EvaluatorAuthorizationMiddleware, async (req, res, next) => {
+    try {
+        const response = await getCurriculums()
+        res.send(response)
+    } catch (err) {
+        next(err)
+    }
+})
 
 routes.post('/', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
     try {

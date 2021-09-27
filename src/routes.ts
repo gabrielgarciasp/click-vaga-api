@@ -4,12 +4,14 @@ import ApiError from './exceptions/ApiError'
 import CandidateController from "./controllers/CandidateController";
 import CurriculumController from "./controllers/CurriculumController";
 import EvaluatorController from "./controllers/EvaluatorController";
+import EvaluationController from "./controllers/EvaluationController";
 
 const routes = Router()
 
 routes.use('/candidate', CandidateController)
 routes.use('/curriculum', CurriculumController)
 routes.use('/evaluator', EvaluatorController)
+routes.use('/evaluation', EvaluationController)
 
 routes.get('/hello', (req: Request, res: Response) => {
     res.send('world')
