@@ -4,6 +4,10 @@ import * as fs from "fs";
 import {FileUploadResponse} from "../types/file/FileUploadResponse";
 
 function __uploadFile(files: any): FileUploadResponse {
+    if (files == undefined) {
+        throw new BadRequestError('File is empty')
+    }
+
     const file = files.file
 
     const [type, extension] = file.mimetype.split('/')
