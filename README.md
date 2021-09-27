@@ -1,4 +1,4 @@
-# click-vaga
+# click-vaga-api
 
 ## Run Application
 
