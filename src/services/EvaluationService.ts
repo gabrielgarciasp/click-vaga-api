@@ -3,9 +3,10 @@ import Evaluation from "../models/Evaluation";
 import {getEvaluatorById} from "./EvaluatorService";
 import {getCurriculumById, setCurriculumEvaluated} from "./CurriculumService";
 import {getRepository} from "typeorm";
+import {EvaluationGetRequest} from "../types/evaluation/EvaluationGetRequest";
 
-async function __getEvaluations(curriculumId: string): Promise<Evaluation[]> {
-    return await getRepository(Evaluation).find({
+async function __getEvaluations(curriculumId: string): Promise<EvaluationGetRequest[]> {
+    const evaluations = await getRepository(Evaluation).find({
         where: {
             curriculum: {
                 id: curriculumId,
@@ -13,8 +14,16 @@ async function __getEvaluations(curriculumId: string): Promise<Evaluation[]> {
         },
         order: {
             createdAt: "ASC"
-        }
+        },
+        relations: ['evaluator']
     })
+
+    return evaluations.map(evaluation => ({
+        approved: evaluation.approved,
+        message: evaluation.message,
+        evaluator: evaluation.evaluator.name,
+        createdAt: evaluation.createdAt
+    }))
 }
 
 async function __createEvaluation(entity: EvaluationCreateRequest) {

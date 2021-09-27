@@ -12,6 +12,9 @@ import {CurriculumCreateRequest} from "../types/curriculum/CurriculumCreateReque
 import {CurriculumUpdateRequest} from "../types/curriculum/CurriculumUpdateRequest";
 import NotFoundError from "../exceptions/NotFoundError";
 import ForbiddenError from "../exceptions/ForbiddenError";
+import {CurriculumGetResponse} from "../types/curriculum/CurriculumGetResponse";
+import {CurriculumGetListCandidateResponse} from "../types/curriculum/CurriculumGetListCandidateResponse";
+import {CurriculumGetListEvaluatorResponse} from "../types/curriculum/CurriculumGetListEvaluatorResponse";
 
 async function getCurriculumById(id: string, ...relations: string[]): Promise<Curriculum> {
     const curriculum = await getRepository(Curriculum).findOne(id, {
@@ -99,8 +102,8 @@ async function _saveCurriculum(entity: CurriculumSaveRequest) {
     await getRepository(Curriculum).save(curriculum)
 }
 
-async function __getCurriculumsCandidate(candidateId: string): Promise<Curriculum[]> {
-    return await getRepository(Curriculum).find({
+async function __getCurriculumsCandidate(candidateId: string): Promise<CurriculumGetListCandidateResponse[]> {
+    const curriculums = await getRepository(Curriculum).find({
         where: {
             candidate: {
                 id: candidateId
@@ -111,16 +114,28 @@ async function __getCurriculumsCandidate(candidateId: string): Promise<Curriculu
             name: "ASC"
         }
     })
+
+    return curriculums.map(curriculum => ({
+        id: curriculum.id,
+        name: curriculum.name,
+    }))
 }
 
-async function __getCurriculumsEvaluator(): Promise<Curriculum[]> {
-    return await getRepository(Curriculum).find({
+async function __getCurriculumsEvaluator(): Promise<CurriculumGetListEvaluatorResponse[]> {
+    const curriculums = await getRepository(Curriculum).find({
         relations: ['candidate'],
         order: {
             evaluated: "DESC",
             updatedAt: "ASC"
-        }
+        },
     })
+
+    return curriculums.map(curriculum => ({
+        id: curriculum.id,
+        name: curriculum.name,
+        candidate: curriculum.candidate.name,
+        evaluated: curriculum.evaluated
+    }))
 }
 
 async function __createCurriculum(entity: CurriculumCreateRequest) {
@@ -166,8 +181,57 @@ async function __deleteCurriculum(curriculumId: string, candidateId: string) {
     await getRepository(Curriculum).delete({id: curriculumId})
 }
 
-async function __getCurriculum(curriculumId: string): Promise<Curriculum> {
-    return getCurriculumById(curriculumId)
+async function __getCurriculum(curriculumId: string): Promise<CurriculumGetResponse> {
+    const curriculum = await getCurriculumById(curriculumId,
+        'skills', 'formations', 'formationsAdditional', 'experiences', 'events', 'information')
+
+    return {
+        id: curriculum.id,
+        name: curriculum.name,
+        goals: curriculum.goals,
+        picture: curriculum.picture != undefined ? `${process.env.URL_PHOTOS}/${curriculum.picture}` : undefined,
+        skills: curriculum.skills.map((skill) => {
+            const entity = new CurriculumSkill()
+            entity.name = skill.name
+            return entity
+        }),
+        formations: curriculum.formations.map((formation) => {
+            const entity = new CurriculumFormation()
+            entity.type = formation.type
+            entity.course = formation.course
+            entity.institution = formation.institution
+            entity.finishDate = formation.finishDate
+            return entity
+        }),
+        formationsAdditional: curriculum.formationsAdditional.map((formationAdditional) => {
+            const entity = new CurriculumFormationAdditional()
+            entity.course = formationAdditional.course
+            entity.hours = formationAdditional.hours
+            entity.institution = formationAdditional.institution
+            entity.finishDate = formationAdditional.finishDate
+            return entity
+        }),
+        experiences: curriculum.experiences.map((experience) => {
+            const entity = new CurriculumExperience()
+            entity.company = experience.company
+            entity.position = experience.position
+            entity.description = experience.description
+            entity.startDate = experience.startDate
+            entity.endDate = experience.endDate
+            return entity
+        }),
+        events: curriculum.events.map((event) => {
+            const entity = new CurriculumEvent()
+            entity.name = event.name
+            entity.description = event.description
+            return entity
+        }),
+        information: curriculum.information.map((information) => {
+            const entity = new CurriculumInformation()
+            entity.description = information.description
+            return entity
+        })
+    }
 }
 
 export {

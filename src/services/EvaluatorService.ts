@@ -8,6 +8,7 @@ import Evaluator from "../models/Evaluator";
 import {EvaluatorUpdateRequest} from "../types/evaluator/EvaluatorUpdateRequest";
 import {EvaluatorAuthenticateRequest} from "../types/evaluator/EvaluatorAuthenticateRequest";
 import {EvaluatorAuthenticateResponse} from "../types/evaluator/EvaluatorAuthenticateResponse";
+import {EvaluatorGetResponse} from "../types/evaluator/EvaluatorGetResponse";
 
 async function getEvaluatorById(id: string): Promise<Evaluator> {
     const evaluator = await getRepository(Evaluator)
@@ -98,8 +99,14 @@ async function __updateEvaluator(entity: EvaluatorUpdateRequest) {
     await getRepository(Evaluator).save(evaluator)
 }
 
-async function __getEvaluator(evaluatorId: string): Promise<Evaluator> {
-    return getEvaluatorById(evaluatorId)
+async function __getEvaluator(evaluatorId: string): Promise<EvaluatorGetResponse> {
+    const evaluator = await getEvaluatorById(evaluatorId)
+
+    return {
+        email: evaluator.email,
+        name: evaluator.name,
+        phone: evaluator.phone,
+    }
 }
 
 export {getEvaluatorById, __authenticateEvaluator, __createEvaluator, __updateEvaluator, __getEvaluator}

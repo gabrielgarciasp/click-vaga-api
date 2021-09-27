@@ -8,6 +8,7 @@ import {CandidateAuthenticateRequest} from "../types/candidate/CandidateAuthenti
 import {sign} from "../utils/jwt";
 import {CandidateAuthenticateResponse} from "../types/candidate/CandidateAuthenticateResponse";
 import {CandidateUpdateRequest} from "../types/candidate/CandidateUpdateRequest";
+import {CandidateGetResponse} from "../types/candidate/CandidateGetResponse";
 
 async function getCandidateById(id: string): Promise<Candidate> {
     const candidate = await getRepository(Candidate)
@@ -107,8 +108,23 @@ async function __updateCandidate(entity: CandidateUpdateRequest) {
     await getRepository(Candidate).save(candidate)
 }
 
-async function __getCandidate(candidateId: string): Promise<Candidate> {
-    return getCandidateById(candidateId)
+async function __getCandidate(candidateId: string): Promise<CandidateGetResponse> {
+    const candidate = await getCandidateById(candidateId)
+
+    return {
+        email: candidate.email,
+        name: candidate.name,
+        gender: candidate.gender,
+        phone: candidate.phone,
+        birthDate: candidate.birthDate,
+        picture: candidate.picture != undefined ? `${process.env.URL_PHOTOS}/${candidate.picture}` : undefined,
+        cep: candidate.cep,
+        address: candidate.address,
+        number: candidate.number,
+        district: candidate.district,
+        city: candidate.city,
+        state: candidate.state,
+    }
 }
 
 export {getCandidateById, __authenticateCandidate, __createCandidate, __updateCandidate, __getCandidate}

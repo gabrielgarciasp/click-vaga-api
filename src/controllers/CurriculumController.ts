@@ -15,6 +15,24 @@ import EvaluatorAuthorizationMiddleware from "../middlewares/EvaluatorAuthorizat
 
 const routes = Router()
 
+routes.get('/candidate', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
+    try {
+        const response = await __getCurriculumsCandidate(String(req.headers.authorizationId))
+        res.send(response)
+    } catch (err) {
+        next(err)
+    }
+})
+
+routes.get('/evaluator', AuthorizationMiddleware, EvaluatorAuthorizationMiddleware, async (req, res, next) => {
+    try {
+        const response = await __getCurriculumsEvaluator()
+        res.send(response)
+    } catch (err) {
+        next(err)
+    }
+})
+
 routes.post('/', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
     try {
         req.body.candidateId = req.headers.authorizationId
@@ -51,24 +69,6 @@ routes.delete('/:id', AuthorizationMiddleware, CandidateAuthorizationMiddleware,
     try {
         await __deleteCurriculum(req.params.id, String(req.headers.authorizationId))
         res.status(204).send()
-    } catch (err) {
-        next(err)
-    }
-})
-
-routes.get('/candidate', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
-    try {
-        const response = await __getCurriculumsCandidate(String(req.headers.authorizationId))
-        res.send(response)
-    } catch (err) {
-        next(err)
-    }
-})
-
-routes.get('/evaluator', AuthorizationMiddleware, EvaluatorAuthorizationMiddleware, async (req, res, next) => {
-    try {
-        const response = await __getCurriculumsEvaluator()
-        res.send(response)
     } catch (err) {
         next(err)
     }
