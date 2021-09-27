@@ -4,7 +4,7 @@ import {getEvaluatorById} from "./EvaluatorService";
 import {getCurriculumById, setCurriculumEvaluated} from "./CurriculumService";
 import {getRepository} from "typeorm";
 
-const getEvaluationsByCurriculum = async (curriculumId: string): Promise<Evaluation[]> => {
+async function __getEvaluations(curriculumId: string): Promise<Evaluation[]> {
     return await getRepository(Evaluation).find({
         where: {
             curriculum: {
@@ -17,7 +17,7 @@ const getEvaluationsByCurriculum = async (curriculumId: string): Promise<Evaluat
     })
 }
 
-const createEvaluation = async (entity: EvaluationCreateRequest) => {
+async function __createEvaluation(entity: EvaluationCreateRequest) {
     const evaluation = new Evaluation()
     evaluation.evaluator = await getEvaluatorById(entity.evaluatorId)
     evaluation.curriculum = await getCurriculumById(entity.curriculumId)
@@ -29,4 +29,4 @@ const createEvaluation = async (entity: EvaluationCreateRequest) => {
     await setCurriculumEvaluated(evaluation.curriculum.id, true)
 }
 
-export {getEvaluationsByCurriculum, createEvaluation}
+export {__getEvaluations, __createEvaluation}

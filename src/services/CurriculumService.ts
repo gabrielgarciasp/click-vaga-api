@@ -13,7 +13,26 @@ import {CurriculumUpdateRequest} from "../types/curriculum/CurriculumUpdateReque
 import NotFoundError from "../exceptions/NotFoundError";
 import ForbiddenError from "../exceptions/ForbiddenError";
 
-const _saveCurriculum = async (entity: CurriculumSaveRequest) => {
+async function getCurriculumById(id: string, ...relations: string[]): Promise<Curriculum> {
+    const curriculum = await getRepository(Curriculum).findOne(id, {
+        relations: relations,
+    })
+
+    if (curriculum == undefined) {
+        throw new NotFoundError('Curriculum not found')
+    }
+
+    return curriculum
+}
+
+async function setCurriculumEvaluated(curriculumId: string, evaluated: boolean) {
+    const curriculum = await getCurriculumById(curriculumId);
+    curriculum.evaluated = evaluated;
+
+    await getRepository(Curriculum).save(curriculum)
+}
+
+async function _saveCurriculum(entity: CurriculumSaveRequest) {
     const curriculum = new Curriculum()
     if (entity.id != undefined) {
         curriculum.id = entity.id
@@ -80,19 +99,7 @@ const _saveCurriculum = async (entity: CurriculumSaveRequest) => {
     await getRepository(Curriculum).save(curriculum)
 }
 
-const getCurriculumById = async (id: string, ...relations: string[]): Promise<Curriculum> => {
-    const curriculum = await getRepository(Curriculum).findOne(id, {
-        relations: relations,
-    })
-
-    if (curriculum == undefined) {
-        throw new NotFoundError('Curriculum not found')
-    }
-
-    return curriculum
-}
-
-const getCurriculumsByCandidateId = async (candidateId: string): Promise<Curriculum[]> => {
+async function __getCurriculumsCandidate(candidateId: string): Promise<Curriculum[]> {
     return await getRepository(Curriculum).find({
         where: {
             candidate: {
@@ -106,7 +113,7 @@ const getCurriculumsByCandidateId = async (candidateId: string): Promise<Curricu
     })
 }
 
-const getCurriculums = async (): Promise<Curriculum[]> => {
+async function __getCurriculumsEvaluator(): Promise<Curriculum[]> {
     return await getRepository(Curriculum).find({
         relations: ['candidate'],
         order: {
@@ -116,14 +123,14 @@ const getCurriculums = async (): Promise<Curriculum[]> => {
     })
 }
 
-const createCurriculum = async (entity: CurriculumCreateRequest) => {
+async function __createCurriculum(entity: CurriculumCreateRequest) {
     await _saveCurriculum({
         ...entity,
         id: undefined,
     })
 }
 
-const updateCurriculum = async (entity: CurriculumUpdateRequest) => {
+async function __updateCurriculum(entity: CurriculumUpdateRequest) {
     const curriculum = await getCurriculumById(entity.id, 'candidate')
 
     const candidate = await curriculum.candidate;
@@ -149,7 +156,7 @@ const updateCurriculum = async (entity: CurriculumUpdateRequest) => {
     await _saveCurriculum(entity)
 }
 
-const deleteCurriculum = async (curriculumId: string, candidateId: string) => {
+async function __deleteCurriculum(curriculumId: string, candidateId: string) {
     const curriculum = await getCurriculumById(curriculumId, 'candidate')
 
     if (curriculum.candidate.id !== candidateId) {
@@ -159,19 +166,17 @@ const deleteCurriculum = async (curriculumId: string, candidateId: string) => {
     await getRepository(Curriculum).delete({id: curriculumId})
 }
 
-const setCurriculumEvaluated = async (curriculumId: string, evaluated: boolean) => {
-    const curriculum = await getCurriculumById(curriculumId);
-    curriculum.evaluated = evaluated;
-
-    await getRepository(Curriculum).save(curriculum)
+async function __getCurriculum(curriculumId: string): Promise<Curriculum> {
+    return getCurriculumById(curriculumId)
 }
 
 export {
     getCurriculumById,
-    getCurriculumsByCandidateId,
-    getCurriculums,
-    createCurriculum,
-    updateCurriculum,
-    deleteCurriculum,
-    setCurriculumEvaluated
+    setCurriculumEvaluated,
+    __getCurriculumsCandidate,
+    __getCurriculumsEvaluator,
+    __createCurriculum,
+    __updateCurriculum,
+    __deleteCurriculum,
+    __getCurriculum
 }

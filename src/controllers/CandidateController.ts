@@ -1,5 +1,10 @@
 import {Router} from "express";
-import {authenticateCandidate, createCandidate, updateCandidate} from "../services/CandidateService";
+import {
+    __authenticateCandidate,
+    __createCandidate,
+    __getCandidate,
+    __updateCandidate
+} from "../services/CandidateService";
 import validate from "../utils/validate";
 import CandidateCreateSchema from "../schemas/candidate/CandidateCreateSchema";
 import CandidateAuthenticateSchema from "../schemas/candidate/CandidateAuthenticateSchema";
@@ -9,11 +14,10 @@ import CandidateAuthorizationMiddleware from "../middlewares/CandidateAuthorizat
 
 const routes = Router()
 
-routes.post('/authenticate', async (req, res, next) => {
+routes.get('/', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async (req, res, next) => {
     try {
-        const values = validate(CandidateAuthenticateSchema, req.body)
-        const response = await authenticateCandidate(values)
-        res.status(200).send(response)
+        const response = await __getCandidate(String(req.headers.authorizationId))
+        res.send(response)
     } catch (err) {
         next(err)
     }
@@ -22,7 +26,7 @@ routes.post('/authenticate', async (req, res, next) => {
 routes.post('/', async (req, res, next) => {
     try {
         const values = validate(CandidateCreateSchema, req.body)
-        await createCandidate(values)
+        await __createCandidate(values)
         res.status(204).send()
     } catch (err) {
         next(err)
@@ -33,8 +37,18 @@ routes.put('/', AuthorizationMiddleware, CandidateAuthorizationMiddleware, async
     try {
         req.body.id = req.headers.authorizationId
         const values = validate(CandidateUpdateSchema, req.body)
-        await updateCandidate(values)
+        await __updateCandidate(values)
         res.status(204).send()
+    } catch (err) {
+        next(err)
+    }
+})
+
+routes.post('/authenticate', async (req, res, next) => {
+    try {
+        const values = validate(CandidateAuthenticateSchema, req.body)
+        const response = await __authenticateCandidate(values)
+        res.status(200).send(response)
     } catch (err) {
         next(err)
     }

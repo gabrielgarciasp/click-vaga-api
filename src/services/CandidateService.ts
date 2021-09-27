@@ -9,6 +9,21 @@ import {sign} from "../utils/jwt";
 import {CandidateAuthenticateResponse} from "../types/candidate/CandidateAuthenticateResponse";
 import {CandidateUpdateRequest} from "../types/candidate/CandidateUpdateRequest";
 
+async function getCandidateById(id: string): Promise<Candidate> {
+    const candidate = await getRepository(Candidate)
+        .findOne({
+            where: {
+                id
+            }
+        })
+
+    if (candidate == undefined) {
+        throw new NotFoundError('Candidate not found')
+    }
+
+    return candidate
+}
+
 async function _checkExistsCandidateByEmail(email: string): Promise<boolean> {
     const repository = getRepository(Candidate)
 
@@ -34,22 +49,7 @@ async function _getCandidateByEmail(email: string): Promise<Candidate> {
     return candidate
 }
 
-async function getCandidateById(id: string): Promise<Candidate> {
-    const candidate = await getRepository(Candidate)
-        .findOne({
-            where: {
-                id
-            }
-        })
-
-    if (candidate == undefined) {
-        throw new NotFoundError('Candidate not found')
-    }
-
-    return candidate
-}
-
-async function authenticateCandidate(entity: CandidateAuthenticateRequest): Promise<CandidateAuthenticateResponse> {
+async function __authenticateCandidate(entity: CandidateAuthenticateRequest): Promise<CandidateAuthenticateResponse> {
     const defaultError = new NotFoundError('Email or Password Incorrect');
 
     let candidate;
@@ -73,7 +73,7 @@ async function authenticateCandidate(entity: CandidateAuthenticateRequest): Prom
     }
 }
 
-async function createCandidate(entity: CandidateCreateRequest) {
+async function __createCandidate(entity: CandidateCreateRequest) {
     if (await _checkExistsCandidateByEmail(entity.email)) {
         throw new ConflictError('This email is already in use')
     }
@@ -88,7 +88,7 @@ async function createCandidate(entity: CandidateCreateRequest) {
     await getRepository(Candidate).save(candidate)
 }
 
-async function updateCandidate(entity: CandidateUpdateRequest) {
+async function __updateCandidate(entity: CandidateUpdateRequest) {
     const candidate = new Candidate()
     candidate.id = entity.id
     candidate.email = entity.email
@@ -107,4 +107,8 @@ async function updateCandidate(entity: CandidateUpdateRequest) {
     await getRepository(Candidate).save(candidate)
 }
 
-export {getCandidateById, authenticateCandidate, createCandidate, updateCandidate}
+async function __getCandidate(candidateId: string): Promise<Candidate> {
+    return getCandidateById(candidateId)
+}
+
+export {getCandidateById, __authenticateCandidate, __createCandidate, __updateCandidate, __getCandidate}

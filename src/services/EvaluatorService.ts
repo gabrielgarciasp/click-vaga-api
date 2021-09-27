@@ -9,6 +9,21 @@ import {EvaluatorUpdateRequest} from "../types/evaluator/EvaluatorUpdateRequest"
 import {EvaluatorAuthenticateRequest} from "../types/evaluator/EvaluatorAuthenticateRequest";
 import {EvaluatorAuthenticateResponse} from "../types/evaluator/EvaluatorAuthenticateResponse";
 
+async function getEvaluatorById(id: string): Promise<Evaluator> {
+    const evaluator = await getRepository(Evaluator)
+        .findOne({
+            where: {
+                id
+            }
+        })
+
+    if (evaluator == undefined) {
+        throw new NotFoundError('Evaluator not found')
+    }
+
+    return evaluator
+}
+
 async function _checkExistsEvaluatorByEmail(email: string): Promise<boolean> {
     const repository = getRepository(Evaluator)
 
@@ -34,22 +49,7 @@ async function _getEvaluatorByEmail(email: string): Promise<Evaluator> {
     return evaluator
 }
 
-async function getEvaluatorById(id: string): Promise<Evaluator> {
-    const evaluator = await getRepository(Evaluator)
-        .findOne({
-            where: {
-                id
-            }
-        })
-
-    if (evaluator == undefined) {
-        throw new NotFoundError('Evaluator not found')
-    }
-
-    return evaluator
-}
-
-async function authenticateEvaluator(entity: EvaluatorAuthenticateRequest): Promise<EvaluatorAuthenticateResponse> {
+async function __authenticateEvaluator(entity: EvaluatorAuthenticateRequest): Promise<EvaluatorAuthenticateResponse> {
     const defaultError = new NotFoundError('Email or Password Incorrect');
 
     let evaluator;
@@ -73,7 +73,7 @@ async function authenticateEvaluator(entity: EvaluatorAuthenticateRequest): Prom
     }
 }
 
-async function createEvaluator(entity: EvaluatorCreateRequest) {
+async function __createEvaluator(entity: EvaluatorCreateRequest) {
     if (await _checkExistsEvaluatorByEmail(entity.email)) {
         throw new ConflictError('This email is already in use')
     }
@@ -87,7 +87,7 @@ async function createEvaluator(entity: EvaluatorCreateRequest) {
     await getRepository(Evaluator).save(evaluator)
 }
 
-async function updateEvaluator(entity: EvaluatorUpdateRequest) {
+async function __updateEvaluator(entity: EvaluatorUpdateRequest) {
     const evaluator = new Evaluator()
     evaluator.id = entity.id
     evaluator.email = entity.email
@@ -98,4 +98,8 @@ async function updateEvaluator(entity: EvaluatorUpdateRequest) {
     await getRepository(Evaluator).save(evaluator)
 }
 
-export {getEvaluatorById, authenticateEvaluator, createEvaluator, updateEvaluator}
+async function __getEvaluator(evaluatorId: string): Promise<Evaluator> {
+    return getEvaluatorById(evaluatorId)
+}
+
+export {getEvaluatorById, __authenticateEvaluator, __createEvaluator, __updateEvaluator, __getEvaluator}
