@@ -5,6 +5,7 @@ import CandidateController from "./controllers/CandidateController";
 import CurriculumController from "./controllers/CurriculumController";
 import EvaluatorController from "./controllers/EvaluatorController";
 import EvaluationController from "./controllers/EvaluationController";
+import FileController from "./controllers/FileController";
 
 const routes = Router()
 
@@ -12,6 +13,7 @@ routes.use('/candidate', CandidateController)
 routes.use('/curriculum', CurriculumController)
 routes.use('/evaluator', EvaluatorController)
 routes.use('/evaluation', EvaluationController)
+routes.use('/file', FileController)
 
 routes.get('/hello', (req: Request, res: Response) => {
     res.send('world')
