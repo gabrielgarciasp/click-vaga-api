@@ -9,6 +9,7 @@ import {sign} from "../utils/jwt";
 import {CandidateAuthenticateResponse} from "../types/candidate/CandidateAuthenticateResponse";
 import {CandidateUpdateRequest} from "../types/candidate/CandidateUpdateRequest";
 import {CandidateGetResponse} from "../types/candidate/CandidateGetResponse";
+import {CandidatePictureRequest} from "../types/candidate/CandidatePictureRequest";
 
 async function getCandidateById(id: string): Promise<Candidate> {
     const candidate = await getRepository(Candidate)
@@ -127,4 +128,18 @@ async function __getCandidate(candidateId: string): Promise<CandidateGetResponse
     }
 }
 
-export {getCandidateById, __authenticateCandidate, __createCandidate, __updateCandidate, __getCandidate}
+async function __updatePicture(entity: CandidatePictureRequest) {
+    const candidate = await getCandidateById(entity.candidateId)
+    candidate.picture = entity.fileName
+
+    await getRepository(Candidate).save(candidate)
+}
+
+export {
+    getCandidateById,
+    __authenticateCandidate,
+    __createCandidate,
+    __updateCandidate,
+    __getCandidate,
+    __updatePicture
+}
