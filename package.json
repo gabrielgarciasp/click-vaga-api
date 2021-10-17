@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm run build && node dist/server",
     "dev": "npx ts-node-dev --respawn src/server.ts",
-    "build": "npx tsc"
+    "build": "npx tsc",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -33,10 +34,14 @@
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/express-fileupload": "^1.1.7",
+    "@types/jest": "^27.0.2",
     "@types/jsonwebtoken": "^8.5.4",
     "@types/node": "^16.3.2",
     "@types/node-cron": "^2.0.4",
     "@types/uuid": "^8.3.1",
+    "jest": "^27.2.5",
+    "jest-puppeteer": "^6.0.0",
+    "ts-jest": "^27.0.7",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
   }
