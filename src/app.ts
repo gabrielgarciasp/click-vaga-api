@@ -1,6 +1,8 @@
 import 'reflect-metadata'
 
 import dotenv from 'dotenv'
+dotenv.config()
+
 import './configs/database'
 
 import express, {json} from 'express'
@@ -9,8 +11,6 @@ import fileUpload from 'express-fileupload'
 
 import cors from 'cors'
 import routes from './routes'
-
-dotenv.config()
 
 const app = express()
 
